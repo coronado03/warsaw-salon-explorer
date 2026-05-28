@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { MdLocationOn } from 'react-icons/md';
 import type { Salon } from '@/types/salon';
 import StarRating from './StarRating';
@@ -12,6 +13,7 @@ export default function SalonCard({ salon }: SalonCardProps) {
   const topServices = salon.services?.slice(0, 3) ?? [];
 
   return (
+    <Link href={`/salon/${salon.id}`}>
     <article className="group flex flex-col bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
       <div className="h-1 w-full bg-gradient-to-r from-rose-400 via-fuchsia-400 to-indigo-400" />
 
@@ -41,5 +43,6 @@ export default function SalonCard({ salon }: SalonCardProps) {
         )}
       </div>
     </article>
+    </Link>
   );
 }
