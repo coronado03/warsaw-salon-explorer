@@ -8,15 +8,26 @@ export type SalonFilters = {
   service?: string;
 };
 
-export async function fetchSalons(filters: SalonFilters = {}): Promise<Salon[]> {
+export type SalonsPage = {
+  data: Salon[];
+  total: number;
+  page: number;
+  totalPages: number;
+};
+
+export async function fetchSalons(
+  filters: SalonFilters = {},
+  page = 1,
+  limit = 12,
+): Promise<SalonsPage> {
   const params = new URLSearchParams();
   if (filters.search) params.set('search', filters.search);
   if (filters.district) params.set('district', filters.district);
   if (filters.service) params.set('service', filters.service);
+  params.set('page', String(page));
+  params.set('limit', String(limit));
 
-  const query = params.toString();
-  const res = await fetch(`${BASE_URL}/salons${query ? `?${query}` : ''}`);
-
+  const res = await fetch(`${BASE_URL}/salons?${params}`);
   if (!res.ok) throw new Error('Failed to fetch salons');
   return res.json();
 }
