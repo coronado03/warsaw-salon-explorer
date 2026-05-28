@@ -33,6 +33,10 @@ export async function patchSalon(id: string, data: Partial<Salon>): Promise<Salo
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error('Failed to update salon');
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    const message = Array.isArray(body.message) ? body.message.join(', ') : (body.message ?? 'Failed to update salon');
+    throw new Error(message);
+  }
   return res.json();
 }

@@ -36,7 +36,7 @@ export class UpdateSalonDto {
   services?: string[];
 
   @IsOptional()
-  @IsIn(['€', '€€', '€€€'])
+  @IsIn(['€', '€€', '€€€', '€€€€'])
   priceRange?: string;
 
   @IsOptional()

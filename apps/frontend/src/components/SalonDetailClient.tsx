@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { HiPencil, HiCheckCircle } from 'react-icons/hi';
+import { HiPencil, HiCheckCircle, HiExclamationCircle } from 'react-icons/hi';
 import type { Salon } from '@/types/salon';
 import { patchSalon } from '@/lib/api';
 import SalonDetailView from './SalonDetailView';
@@ -15,13 +15,19 @@ export default function SalonDetailClient({ initial }: SalonDetailClientProps) {
   const [salon, setSalon] = useState(initial);
   const [editing, setEditing] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const handleSave = async (data: Partial<Salon>) => {
-    const updated = await patchSalon(salon.id, data);
-    setSalon(updated);
-    setEditing(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 4000);
+    setSaveError(null);
+    try {
+      const updated = await patchSalon(salon.id, data);
+      setSalon(updated);
+      setEditing(false);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 4000);
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : 'Failed to save');
+    }
   };
 
   return (
@@ -30,6 +36,13 @@ export default function SalonDetailClient({ initial }: SalonDetailClientProps) {
         <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-medium">
           <HiCheckCircle className="w-4 h-4 shrink-0" />
           Salon updated successfully.
+        </div>
+      )}
+
+      {saveError && (
+        <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-sm font-medium">
+          <HiExclamationCircle className="w-4 h-4 shrink-0" />
+          {saveError}
         </div>
       )}
 
