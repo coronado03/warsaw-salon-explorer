@@ -8,11 +8,11 @@ import { SalonsModule } from './salons/salons.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'salon',
-      password: 'salon',
-      database: 'salons',
+      host: process.env.DB_HOST ?? 'localhost',
+      port: parseInt(process.env.DB_PORT ?? '5432'),
+      username: process.env.DB_USER ?? 'salon',
+      password: process.env.DB_PASSWORD ?? 'salon',
+      database: process.env.DB_NAME ?? 'salons',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
