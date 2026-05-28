@@ -10,7 +10,16 @@ export class SalonsService {
     private readonly salonsRepository: Repository<Salon>,
   ) {}
 
-  findAll(filters: { district?: string; search?: string; service?: string }) {
+  async findAll(filters: {
+    district?: string;
+    search?: string;
+    service?: string;
+    page?: number;
+    limit?: number;
+  }) {
+    const page = filters.page ?? 1;
+    const limit = filters.limit ?? 12;
+
     const qb = this.salonsRepository.createQueryBuilder('salon');
 
     if (filters.district) {
@@ -30,7 +39,11 @@ export class SalonsService {
       });
     }
 
-    return qb.getMany();
+    qb.skip((page - 1) * limit).take(limit);
+
+    const [data, total] = await qb.getManyAndCount();
+
+    return { data, total, page, totalPages: Math.ceil(total / limit) };
   }
 
   async findOne(id: string) {

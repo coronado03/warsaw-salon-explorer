@@ -20,8 +20,16 @@ export class SalonsController {
     @Query('district') district?: string,
     @Query('search') search?: string,
     @Query('service') service?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
   ) {
-    return this.salonsService.findAll({ district, search, service });
+    return this.salonsService.findAll({
+      district,
+      search,
+      service,
+      page: page ? parseInt(page) : undefined,
+      limit: limit ? parseInt(limit) : undefined,
+    });
   }
 
   @Get(':id')
