@@ -1,0 +1,17 @@
+{
+  "name": "warsaw-salon-explorer",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/backend",
+    "apps/frontend"
+  ],
+  "scripts": {
+    "backend": "npm run start:dev --workspace=apps/backend",
+    "frontend": "npm run dev --workspace=apps/frontend",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
