@@ -105,6 +105,22 @@ Visit [http://localhost:3000](http://localhost:3000)
 
 ---
 
+## Running Tests
+
+The backend has unit tests covering the service layer (filtering, pagination, not-found handling) and the controller layer.
+
+```bash
+cd apps/backend
+npm test
+```
+
+```
+Test Suites: 2 passed
+Tests:       18 passed
+```
+
+---
+
 ## API Endpoints
 
 | Method | Endpoint | Description |

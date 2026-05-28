@@ -7,7 +7,7 @@ import { Salon } from './entities/salon.entity';
 
 const mockSalon = (): Salon =>
   ({
-    id: 'uuid-1',
+    id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
     name: 'Test Salon',
     address: 'ul. Marszałkowska 1, Warszawa',
     district: 'Śródmieście',
@@ -79,10 +79,10 @@ describe('SalonsController', () => {
     it('returns the salon from the service', async () => {
       service.findOne.mockResolvedValue(mockSalon());
 
-      const result = await controller.findOne('uuid-1');
+      const result = await controller.findOne('a1b2c3d4-e5f6-7890-abcd-ef1234567890');
 
-      expect(service.findOne).toHaveBeenCalledWith('uuid-1');
-      expect(result.id).toBe('uuid-1');
+      expect(service.findOne).toHaveBeenCalledWith('a1b2c3d4-e5f6-7890-abcd-ef1234567890');
+      expect(result.id).toBe('a1b2c3d4-e5f6-7890-abcd-ef1234567890');
     });
 
     it('propagates NotFoundException from the service', async () => {
@@ -97,9 +97,9 @@ describe('SalonsController', () => {
       service.update.mockResolvedValue(updated);
 
       const dto: UpdateSalonDto = { name: 'Updated' };
-      const result = await controller.update('uuid-1', dto);
+      const result = await controller.update('a1b2c3d4-e5f6-7890-abcd-ef1234567890', dto);
 
-      expect(service.update).toHaveBeenCalledWith('uuid-1', dto);
+      expect(service.update).toHaveBeenCalledWith('a1b2c3d4-e5f6-7890-abcd-ef1234567890', dto);
       expect(result.name).toBe('Updated');
     });
 

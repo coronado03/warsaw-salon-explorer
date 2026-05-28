@@ -6,7 +6,7 @@ import { Salon } from './entities/salon.entity';
 
 const mockSalon = (): Salon =>
   ({
-    id: 'uuid-1',
+    id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
     name: 'Test Salon',
     address: 'ul. Marszałkowska 1, Warszawa',
     district: 'Śródmieście',
@@ -134,20 +134,25 @@ describe('SalonsService', () => {
 
   describe('findOne', () => {
     it('returns a salon by id', async () => {
-      const result = await service.findOne('uuid-1');
-      expect(result.id).toBe('uuid-1');
-      expect(repo.findOneBy).toHaveBeenCalledWith({ id: 'uuid-1' });
+      const result = await service.findOne('a1b2c3d4-e5f6-7890-abcd-ef1234567890');
+      expect(result.id).toBe('a1b2c3d4-e5f6-7890-abcd-ef1234567890');
+      expect(repo.findOneBy).toHaveBeenCalledWith({ id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' });
     });
 
     it('throws NotFoundException when salon does not exist', async () => {
       repo.findOneBy.mockResolvedValue(null);
-      await expect(service.findOne('bad-id')).rejects.toThrow(NotFoundException);
+      await expect(service.findOne('00000000-0000-0000-0000-000000000000')).rejects.toThrow(NotFoundException);
+    });
+
+    it('throws NotFoundException for an invalid UUID without hitting the DB', async () => {
+      await expect(service.findOne('not-a-uuid')).rejects.toThrow(NotFoundException);
+      expect(repo.findOneBy).not.toHaveBeenCalled();
     });
   });
 
   describe('update', () => {
     it('merges attrs and saves', async () => {
-      const result = await service.update('uuid-1', { name: 'New Name' });
+      const result = await service.update('a1b2c3d4-e5f6-7890-abcd-ef1234567890', { name: 'New Name' });
       expect(result.name).toBe('New Name');
       expect(repo.save).toHaveBeenCalled();
     });

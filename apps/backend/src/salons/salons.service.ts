@@ -47,6 +47,8 @@ export class SalonsService {
   }
 
   async findOne(id: string) {
+    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!UUID_RE.test(id)) throw new NotFoundException(`Salon #${id} not found`);
     const salon = await this.salonsRepository.findOneBy({ id });
     if (!salon) throw new NotFoundException(`Salon #${id} not found`);
     return salon;
