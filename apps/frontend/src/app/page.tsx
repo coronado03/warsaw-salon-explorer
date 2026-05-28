@@ -1,35 +1,38 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { fetchSalons, type SalonFilters, type SalonsPage } from '@/lib/api';
 import SalonCard from '@/components/SalonCard';
 import FilterBar from '@/components/FilterBar';
 import Pagination from '@/components/Pagination';
 
 const LIMIT = 12;
+const EMPTY: SalonsPage = { data: [], total: 0, page: 1, totalPages: 1 };
 
 export default function HomePage() {
-  const [result, setResult] = useState<SalonsPage>({ data: [], total: 0, page: 1, totalPages: 1 });
+  const [result, setResult] = useState<SalonsPage>(EMPTY);
   const [allDistricts, setAllDistricts] = useState<string[]>([]);
   const [allServices, setAllServices] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [fetching, setFetching] = useState(true);
+  const [initialLoad, setInitialLoad] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<SalonFilters>({});
   const [page, setPage] = useState(1);
 
   const load = useCallback(async (f: SalonFilters, p: number) => {
-    setLoading(true);
+    setFetching(true);
     setError(null);
     try {
-      setResult(await fetchSalons(f, p, LIMIT));
+      const res = await fetchSalons(f, p, LIMIT);
+      setResult(res);
     } catch {
       setError('Could not load salons. Is the backend running?');
     } finally {
-      setLoading(false);
+      setFetching(false);
+      setInitialLoad(false);
     }
   }, []);
 
-  // Fetch all salons once (high limit) to populate filter dropdowns
   useEffect(() => {
     fetchSalons({}, 1, 1000).then((r) => {
       setAllDistricts(Array.from(new Set(r.data.map((s) => s.district))).sort());
@@ -45,6 +48,7 @@ export default function HomePage() {
   };
 
   const salons = result.data;
+  const showSkeleton = initialLoad && fetching;
 
   return (
     <main className="min-h-screen bg-[#faf9f7]">
@@ -72,7 +76,11 @@ export default function HomePage() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pb-16 flex flex-col gap-8">
-        {loading && (
+        {error && (
+          <p className="text-center text-sm text-rose-500 py-16">{error}</p>
+        )}
+
+        {showSkeleton && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {Array.from({ length: LIMIT }).map((_, i) => (
               <div key={i} className="h-52 rounded-2xl bg-stone-100 animate-pulse" />
@@ -80,27 +88,25 @@ export default function HomePage() {
           </div>
         )}
 
-        {error && (
-          <p className="text-center text-sm text-rose-500 py-16">{error}</p>
-        )}
-
-        {!loading && !error && salons.length === 0 && (
+        {!showSkeleton && !error && salons.length === 0 && !fetching && (
           <p className="text-center text-sm text-stone-400 py-16">No salons found.</p>
         )}
 
-        {!loading && !error && salons.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 items-stretch">
+        {!showSkeleton && !error && salons.length > 0 && (
+          <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 items-stretch transition-opacity duration-150 ${fetching ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
             {salons.map((salon) => (
               <SalonCard key={salon.id} salon={salon} />
             ))}
           </div>
         )}
 
-        <Pagination
-          page={page}
-          totalPages={result.totalPages}
-          onChange={setPage}
-        />
+        {!showSkeleton && (
+          <Pagination
+            page={page}
+            totalPages={result.totalPages}
+            onChange={setPage}
+          />
+        )}
       </div>
     </main>
   );
