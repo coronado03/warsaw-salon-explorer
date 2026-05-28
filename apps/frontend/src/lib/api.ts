@@ -20,3 +20,19 @@ export async function fetchSalons(filters: SalonFilters = {}): Promise<Salon[]> 
   if (!res.ok) throw new Error('Failed to fetch salons');
   return res.json();
 }
+
+export async function fetchSalon(id: string): Promise<Salon> {
+  const res = await fetch(`${BASE_URL}/salons/${id}`);
+  if (!res.ok) throw new Error('Salon not found');
+  return res.json();
+}
+
+export async function patchSalon(id: string, data: Partial<Salon>): Promise<Salon> {
+  const res = await fetch(`${BASE_URL}/salons/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error('Failed to update salon');
+  return res.json();
+}
