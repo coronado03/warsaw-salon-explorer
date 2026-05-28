@@ -3,7 +3,7 @@ type PriceRangeProps = {
 };
 
 export default function PriceRange({ priceRange }: PriceRangeProps) {
-  const max = 3;
+  const max = 4;
   const active = priceRange.length;
 
   return (

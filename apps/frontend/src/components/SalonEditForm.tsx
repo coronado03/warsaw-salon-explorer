@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { Salon } from '@/types/salon';
+import SelectDropdown from './SelectDropdown';
 
 type SalonEditFormProps = {
   salon: Salon;
@@ -75,12 +76,12 @@ export default function SalonEditForm({ salon, onSave, onCancel }: SalonEditForm
 
         <div>
           <label className={labelClass}>Price Range</label>
-          <select className={inputClass} value={form.priceRange} onChange={set('priceRange')}>
-            <option value="">—</option>
-            {PRICE_OPTIONS.map((p) => (
-              <option key={p} value={p}>{p}</option>
-            ))}
-          </select>
+          <SelectDropdown
+            value={form.priceRange || '__all__'}
+            placeholder="—"
+            options={PRICE_OPTIONS}
+            onChange={(v) => setForm((f) => ({ ...f, priceRange: v === '__all__' ? '' : v }))}
+          />
         </div>
 
         <div>
